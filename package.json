@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "expo": "^23.0.4",
+    "babel-plugin-transform-inline-environment-variables": "^0.2.0",
     "react": "16.0.0",
     "react-native": "0.50.3"
   }

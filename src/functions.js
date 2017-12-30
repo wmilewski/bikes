@@ -27,4 +27,8 @@ const parsePlace = place => ({
 
 const parseResponse = response => response.places.map(parsePlace);
 
-export {parseResponse};
+const buildQuery = data => Object.keys(data).map(function(key) {
+    return [key, data[key]].map(encodeURIComponent).join("=");
+}).join("&");
+
+export {parseResponse, buildQuery};

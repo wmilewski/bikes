@@ -1,6 +1,15 @@
 import React from 'react';
-import {StyleSheet, Text, ScrollView, View, TouchableOpacity, Linking} from 'react-native';
-import {parseResponse} from './src/functions';
+import {
+  StyleSheet,
+  Text,
+  ScrollView,
+  View,
+  TouchableOpacity,
+  Linking,
+  RefreshControl,
+  PermissionsAndroid
+} from 'react-native';
+import {parseResponse, buildQuery} from './src/functions';
 import Labels from './src/labels';
 
 export default class App extends React.Component {
@@ -8,10 +17,52 @@ export default class App extends React.Component {
         super(props);
 
         this.onPressPlace = this.onPressPlace.bind(this);
+        this.findNearestPlaces = this.findNearestPlaces.bind(this);
 
         this.state = {
-            places: parseResponse(require('./tests/response.json')),
+            loading: false,
+            places: [],
         };
+
+        PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            'title': 'Bikes App Location Permission',
+            'message': 'Bikes App needs access to your location ' +
+                       'so you can find nearby bikes.'
+          }
+        ).then(granted => {
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            this.findNearestPlaces();
+          } else {
+            console.log("Location permission denied")
+          }
+        });
+    }
+
+    findNearestPlaces() {
+        navigator.geolocation.getCurrentPosition(location => {
+            const params = {
+                lat: location.coords.latitude,
+                lon: location.coords.longitude,
+                radius: 2000,
+                app_id: process.env.APP_ID,
+                app_key: process.env.APP_KEY,
+            };
+
+            this.setState({
+                loading: true,
+            });
+
+            fetch(`https://api.tfl.gov.uk/BikePoint?${buildQuery(params)}`)
+                .then(response => response.json())
+                .then(responseJson => {
+                    this.setState({
+                        loading: false,
+                        places: parseResponse(responseJson),
+                    });
+                });
+        });
     }
 
     onPressPlace(place) {
@@ -47,7 +98,9 @@ export default class App extends React.Component {
         });
 
         return (
-          <ScrollView>
+          <ScrollView
+              refreshControl={<RefreshControl refreshing={this.state.loading} onRefresh={this.findNearestPlaces}/>}
+          >
               {list}
           </ScrollView>
         );
