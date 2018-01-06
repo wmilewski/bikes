@@ -8,7 +8,8 @@ As many Londoners do, I often happen to be in a rush and want to (quickly :)):
  
 The sole purpose of the application is to be as easy and quick to use as possible. Ideally, I want to be able to pull out the phone while riding the bike, and have the information I'm looking for at my fingertips, without having to type or click anything.
 
-Currently the app is in a pre-alpha state, works to a bare minimum, and has only been tested on Android. 
+**Currently the app is in a pre-alpha state, works to a bare minimum, and has only been tested on Android.**
+
 Immediately after opening it refreshes by querying the API for nearby docking stations, using the current location. It lists them sorted by distance and highlights the number of avaiable bikes and spaces for each. Clicking on a listed docking station opens Google Maps, with a pin on the docking station.
 
 ## Build
